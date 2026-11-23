@@ -1358,7 +1358,7 @@ function showConnError(msg, cfg){
   try {
     sb = supabase.createClient(cfg.url, cfg.anonKey);
     const { data, error } = await sb.auth.getSession();
-    if(data && data.session){ S.session=data.session; S.user=data.user; await loadProfile(); }
+    if(data && data.session){ S.session=data.session; S.user=data.session.user; await loadProfile(); }
     // لو فيه error بس مفيش session → نكمل لشاشة الدخول (المستخدم لسه ما سجّلش أو انتهت الجلسة)
   } catch(e){
     return showConnError('تعذّر الاتصال بقاعدة البيانات (' + (e&&e.message||e) + '). تأكد من Project URL و anon key، أو اضغط «إعادة المحاولة».', cfg);
