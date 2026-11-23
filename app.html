@@ -414,6 +414,7 @@ function setLoader(pct, status){
 }
 function hideLoader(){ const l=document.getElementById('loader'); if(!l) return; l.classList.add('done'); setTimeout(()=>l.remove(), 500); }
 function _ldMin(ms){ const d=Date.now()-_ldT0; return d<ms ? new Promise(r=>setTimeout(r,ms-d)) : Promise.resolve(); }
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
 function confirmBox(msg, onYes){
   modal(`<div class="modal-h"><h3>تأكيد</h3><button class="x-btn" onclick="closeTopModal()">×</button></div>
     <div class="modal-b"><p>${esc(msg)}</p></div>
@@ -1500,33 +1501,46 @@ function showConnError(msg, cfg){
   </div>`;
 }
 (async function init(){
-  setLoader(14, 'تهيئة النظام…');
-  await new Promise(r=>setTimeout(r,140));
+  setLoader(8, 'تهيئة النظام…');
+  await sleep(400);
   const cfg = effectiveConfig();
-  setLoader(34, 'تحميل المكتبات…');
+  setLoader(22, 'تحميل المكتبات…');
+  await sleep(600);
   if(!cfg){                                                // مفيش إعداد → شاشة الإعداد
-    await _ldMin(1100); setLoader(100,'جاهز'); setTimeout(hideLoader,260);
+    setLoader(58, 'تجهيز الإعداد…'); await sleep(750);
+    setLoader(82, 'التحقق من المتطلبات…'); await sleep(550);
+    setLoader(100, 'جاهز'); await sleep(420);
+    hideLoader();
     return showSetupScreen();
   }
   if(!window.supabase){                                    // الإعداد محفوظ بس المكتبة ماتحمّلتش
-    await _ldMin(1100); setLoader(100,'تعذّر التحميل'); setTimeout(hideLoader,260);
+    setLoader(58, 'تجهيز الإعداد…'); await sleep(750);
+    setLoader(82, 'التحقق من المتطلبات…'); await sleep(550);
+    setLoader(100, 'تعذّر التحميل'); await sleep(420);
+    hideLoader();
     return showConnError('مكتبة الاتصال (Supabase) ماتحمّلتش من السيرفر. لو شبكتك بطيئة أو بتمنع التحميل، جرّب ريفرش أو VPN ثم اضغط «إعادة المحاولة».', cfg);
   }
   try {
-    setLoader(54, 'الاتصال بقاعدة البيانات…');
+    setLoader(40, 'الاتصال بقاعدة البيانات…');
     sb = supabase.createClient(cfg.url, cfg.anonKey);
-    setLoader(72, 'استعادة الجلسة…');
+    await sleep(500);
+    setLoader(56, 'استعادة الجلسة…');
     const { data, error } = await sb.auth.getSession();
     if(data && data.session){ S.session=data.session; S.user=data.session.user; await loadProfile(); }
+    setLoader(74, 'تحميل البيانات…');
+    await sleep(650);
     // لو فيه error بس مفيش session → نكمل لشاشة الدخول (المستخدم لسه ما سجّلش أو انتهت الجلسة)
   } catch(e){
-    await _ldMin(1100); setLoader(100,'تعذّر الاتصال'); setTimeout(hideLoader,260);
+    setLoader(88, 'إعادة المحاولة…'); await sleep(500);
+    setLoader(100, 'تعذّر الاتصال'); await sleep(450);
+    hideLoader();
     return showConnError('تعذّر الاتصال بقاعدة البيانات (' + (e&&e.message||e) + '). تأكد من Project URL و anon key، أو اضغط «إعادة المحاولة».', cfg);
   }
   setLoader(90, 'تجهيز الواجهة…');
-  await _ldMin(1500);
+  await sleep(560);
   setLoader(100, 'جاهز');
-  setTimeout(()=>{ hideLoader(); render(); }, 300);
+  await sleep(420);
+  hideLoader(); render();
 })();
 </script>
 </body>
