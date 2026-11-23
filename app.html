@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Elite Flow — نظام إدارة الأعمال</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgNjQgNjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZyIgeDE9IjAiIHkxPSIwIiB4Mj0iMSIgeTI9IjEiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzFlNDBhZiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzBmNzY2ZSIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPgo8cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSIxNCIgZmlsbD0idXJsKCNnKSIvPgo8cmVjdCB4PSIxNCIgeT0iMTUiIHdpZHRoPSIzNiIgaGVpZ2h0PSI5IiByeD0iNC41IiBmaWxsPSIjZmZmIi8+CjxyZWN0IHg9IjE0IiB5PSIyNy41IiB3aWR0aD0iMjYiIGhlaWdodD0iOSIgcng9IjQuNSIgZmlsbD0iI2ZmZiIvPgo8cmVjdCB4PSIxNCIgeT0iNDAiIHdpZHRoPSIzNiIgaGVpZ2h0PSI5IiByeD0iNC41IiBmaWxsPSIjZmZmIi8+Cjwvc3ZnPg==">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#1e40af">
+<meta name="apple-mobile-web-app-title" content="Elite Flow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -43,6 +51,7 @@ input,select,textarea{font-family:inherit}
 .auth-brand::before{width:340px;height:340px;top:-120px;left:-80px}
 .auth-brand::after{width:260px;height:260px;bottom:-100px;right:-60px}
 .auth-brand .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1.5px;background:rgba(255,255,255,.12);padding:6px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);margin-bottom:20px;width:fit-content}
+.auth-logo{width:58px;height:58px;border-radius:16px;background:linear-gradient(135deg,#1e40af,#0f766e);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.25);margin-bottom:18px;border:1px solid rgba(255,255,255,.2)}
 .auth-brand h1{font-size:38px;font-weight:900;margin:0 0 14px;letter-spacing:-.5px}
 .auth-brand p{font-size:16px;color:rgba(255,255,255,.85);max-width:440px;margin:0 0 28px}
 .auth-feat{display:flex;flex-direction:column;gap:14px;position:relative;z-index:1}
@@ -420,6 +429,7 @@ function companyQuery(table){
 /* ===================== Shell & Navigation ===================== */
 function brandHTML(){
   return `<div style="position:relative;z-index:1">
+    <div class="auth-logo"><svg viewBox="0 0 64 64" width="34" height="34" aria-hidden="true"><rect x="14" y="15" width="36" height="9" rx="4.5" fill="#fff"/><rect x="14" y="27.5" width="26" height="9" rx="4.5" fill="#fff"/><rect x="14" y="40" width="36" height="9" rx="4.5" fill="#fff"/></svg></div>
     <span class="tag">نظام سحابي متعدد الشركات</span>
     <h1>Elite Flow</h1>
     <p>نظام إدارة أعمال متكامل — مبيعات، مشتريات، مخزون، مصروفات، شفتات، تقارير — صالح لأي نشاط: تجزئة، جملة، تصنيع، خدمات.</p>
@@ -473,7 +483,7 @@ function shell(title, content){
       <header class="topnav">
         <div class="topnav-row">
           <button class="menu-btn" onclick="document.getElementById('tnav').classList.toggle('open')">☰</button>
-          <div class="topnav-brand"><div class="logo">E</div><div><div class="bn">Elite Flow</div><div class="bs">${esc(comp?.name||'')}</div></div></div>
+          <div class="topnav-brand"><div class="logo"><svg viewBox="0 0 64 64" width="20" height="20" aria-hidden="true"><rect x="14" y="15" width="36" height="9" rx="4.5" fill="#fff"/><rect x="14" y="27.5" width="26" height="9" rx="4.5" fill="#fff"/><rect x="14" y="40" width="36" height="9" rx="4.5" fill="#fff"/></svg></div><div><div class="bn">Elite Flow</div><div class="bs">${esc(comp?.name||'')}</div></div></div>
           <nav class="topnav-links" id="tnav">${links}</nav>
           <div class="topnav-user">
             ${companySelect}
