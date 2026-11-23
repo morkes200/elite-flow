@@ -7,9 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="lib/supabase.min.js"></script>
+<script defer src="lib/chart.umd.min.js"></script>
+<script defer src="lib/xlsx.full.min.js"></script>
 <style>
 :root{
   --bg:#f1f5f9; --card:#ffffff; --text:#0f172a; --muted:#64748b; --border:#e2e8f0;
@@ -1300,14 +1300,33 @@ function showSetupScreen(){
 }
 
 /* ===================== Init ===================== */
+function showConnError(msg, cfg){
+  const url = cfg ? esc(cfg.url) : '';
+  $('#app').innerHTML = `<div class="auth-wrap">
+    <div class="auth-brand">${brandHTML()}</div>
+    <div class="auth-side"><div class="auth-card" style="max-width:520px">
+      <h2>تعذّر تشغيل التطبيق</h2>
+      <div class="sub">${esc(msg)}</div>
+      <div class="alert alert-info" style="margin-top:12px">الإعداد المحفوظ: <b>${url}</b></div>
+      <button class="btn btn-primary btn-block" style="margin-top:12px" onclick="location.reload()">🔄 إعادة المحاولة</button>
+      <button class="btn btn-block" style="margin-top:8px;background:#e2e8f0;color:#0f172a" onclick="localStorage.removeItem('ef_supabase_config');location.reload()">مسح الإعداد وإدخاله من جديد</button>
+    </div></div>
+  </div>`;
+}
 (async function init(){
   const cfg = effectiveConfig();
-  if(!cfg || !window.supabase){ return showSetupScreen(); }
+  if(!cfg){ return showSetupScreen(); }                        // مفيش إعداد → شاشة الإعداد
+  if(!window.supabase){                                        // الإعداد محفوظ بس المكتبة ماتحمّلتش
+    return showConnError('مكتبة الاتصال (Supabase) ماتحمّلتش من السيرفر. لو شبكتك بطيئة أو بتمنع التحميل، جرّب ريفرش أو VPN ثم اضغط «إعادة المحاولة».', cfg);
+  }
   try {
     sb = supabase.createClient(cfg.url, cfg.anonKey);
-    const { data } = await sb.auth.getSession();
-    if(data.session){ S.session=data.session; S.user=data.user; await loadProfile(); }
-  } catch(e){ return showSetupScreen(); }
+    const { data, error } = await sb.auth.getSession();
+    if(data && data.session){ S.session=data.session; S.user=data.user; await loadProfile(); }
+    // لو فيه error بس مفيش session → نكمل لشاشة الدخول (المستخدم لسه ما سجّلش أو انتهت الجلسة)
+  } catch(e){
+    return showConnError('تعذّر الاتصال بقاعدة البيانات (' + (e&&e.message||e) + '). تأكد من Project URL و anon key، أو اضغط «إعادة المحاولة».', cfg);
+  }
   render();
 })();
 </script>
