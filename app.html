@@ -1186,6 +1186,7 @@ async function removeMember(uid,email){
 async function viewSettings(){
   if(!can('settings.manage')){ shell('الإعدادات', permDenied()); return; }
   const c=S.company;
+  const cfg=effectiveConfig()||{url:'',anonKey:''};
   const types=[['retail','تجزئة (متجر)'],['wholesale','جملة'],['manufacturing','تصنيع / مصنع'],['service','خدمات'],['mixed','مختلط']];
   shell('الإعدادات', `<div class="card"><div class="card-h"><h3>بيانات الشركة</h3></div>
     <form id="setForm">
@@ -1204,6 +1205,19 @@ async function viewSettings(){
       <button class="btn btn-primary" type="submit">حفظ الإعدادات</button>
     </form>
   </div>
+  <div class="card"><div class="card-h"><h3>قاعدة البيانات (Supabase)</h3></div>
+    <p class="muted" style="font-size:13px;margin-top:0">بيانات الاتصال بقاعدة بيانات Supabase الخاصة بشركتك. يمكنك تغييرها في أي وقت للانتقال إلى قاعدة بيانات أخرى.</p>
+    <form id="dbForm">
+      <div class="field"><label>Project URL</label><input id="db_url" value="${esc(cfg.url)}" placeholder="https://xxxx.supabase.co"></div>
+      <div class="field"><label>anon public key</label><textarea id="db_key" rows="3" placeholder="eyJhbGciOi...">${esc(cfg.anonKey||'')}</textarea>
+        <div class="muted" style="font-size:11.5px;margin-top:4px">مفتاح anon علني (آمن — البيانات محمية بـ RLS). يُستخدم للاتصال فقط.</div></div>
+      <div id="dbMsg"></div>
+      <div class="row2">
+        <button class="btn" type="button" onclick="testDbConnection()">اختبار الاتصال</button>
+        <button class="btn btn-primary" type="submit">حفظ وإعادة الاتصال</button>
+      </div>
+    </form>
+  </div>
   <div class="card"><div class="card-h"><h3>منطقة الخطر</h3></div>
     <p class="muted" style="font-size:13px;margin-top:0">حذف الشركة يحذف كل البيانات المرتبطة نهائياً (فواتير، منتجات، عملاء، مستخدمون). لا يمكن التراجع.</p>
     <button class="btn btn-danger" onclick="deleteCompany()">حذف الشركة نهائياً</button>
@@ -1220,6 +1234,29 @@ async function viewSettings(){
     const cm=S.companies.find(x=>x.id===S.companyId); if(cm) Object.assign(cm, payload);
     toast('تم حفظ الإعدادات','ok');
   });
+  $('#dbForm')?.addEventListener('submit', e=>{ e.preventDefault(); saveDbConfig(); });
+}
+async function testDbConnection(){
+  const url=$('#db_url').value.trim(), key=$('#db_key').value.trim();
+  const msg=$('#dbMsg');
+  if(!url.startsWith('http')){ msg.innerHTML='<div class="alert alert-error">الرابط غير صحيح — يجب أن يبدأ بـ https://</div>'; return; }
+  if(key.length<20){ msg.innerHTML='<div class="alert alert-error">المفتاح غير صحيح</div>'; return; }
+  msg.innerHTML='<div class="alert alert-info">جارٍ اختبار الاتصال...</div>';
+  try{
+    const t=supabase.createClient(url,key);
+    const {error}=await t.from('companies').select('id').limit(1);
+    if(error){ msg.innerHTML='<div class="alert alert-error">الاتصال وصل، لكن الجداول غير موجودة — تأكد من رفع schema.sql على هذا المشروع. ('+esc(error.message)+')</div>'; }
+    else { msg.innerHTML='<div class="alert" style="background:#dcfce7;color:#166534;padding:8px 12px;border-radius:8px;font-size:13px">✓ الاتصال ناجح وقاعدة البيانات جاهزة.</div>'; }
+  }catch(e){ msg.innerHTML='<div class="alert alert-error">فشل الاتصال: '+esc(e&&e.message||e)+'</div>'; }
+}
+function saveDbConfig(){
+  const url=$('#db_url').value.trim(), key=$('#db_key').value.trim();
+  if(!url.startsWith('http')){ $('#dbMsg').innerHTML='<div class="alert alert-error">الرابط غير صحيح — يجب أن يبدأ بـ https://</div>'; return; }
+  if(key.length<20){ $('#dbMsg').innerHTML='<div class="alert alert-error">المفتاح غير صحيح</div>'; return; }
+  saveConfig(url,key);
+  toast('تم حفظ الإعداد — جارٍ إعادة الاتصال...','ok');
+  try{ sb.auth.signOut(); }catch(e){}
+  setTimeout(()=>location.reload(),700);
 }
 function deleteCompany(){
   confirmBox('تأكيد حذف الشركة وكل بياناتها نهائياً؟ لا يمكن التراجع.', async()=>{
@@ -1272,17 +1309,16 @@ function showSetupScreen(){
   $('#app').innerHTML = `<div class="auth-wrap">
     <div class="auth-brand">${brandHTML()}</div>
     <div class="auth-side"><div class="auth-card" style="max-width:480px">
-      <h2>إعداد أول مرة</h2>
-      <div class="sub">اربط التطبيق بقاعدة بيانات Supabase</div>
+      <h2>ربط قاعدة البيانات</h2>
+      <div class="sub">اربط التطبيق بقاعدة بيانات Supabase الخاصة بشركتك</div>
       ${fileWarn}
-      <div class="alert alert-info">من لوحة Supabase: <b>Project Settings → API</b>، انسخ <b>Project URL</b> و <b>anon public key</b>، ثم الصقهما هنا. تُحفظ القيم في متصفحك فقط.</div>
+      <div class="alert alert-info">من لوحة Supabase: <b>Project Settings → API</b>، انسخ <b>Project URL</b> و <b>anon public key</b>، ثم الصقهما هنا. تُحفظ القيم في متصفحك فقط، ويمكنك تعديلها في أي وقت لاحقاً من <b>الإعدادات ← قاعدة البيانات</b>.</div>
       <div id="setupErr"></div>
       <form id="setupForm">
         <div class="field"><label>Project URL</label><input id="su_url" placeholder="https://xxxx.supabase.co" required></div>
         <div class="field"><label>anon public key</label><textarea id="su_key" rows="4" required placeholder="eyJhbGciOi..."></textarea></div>
         <button class="btn btn-primary btn-block" type="submit">حفظ وربط</button>
       </form>
-      <div class="auth-switch">لإعادة الإعداد لاحقاً: امسح تخزين الموقع في المتصفح.</div>
     </div></div>
   </div>`;
   $('#setupForm').addEventListener('submit', e=>{
