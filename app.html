@@ -234,6 +234,35 @@ const ROLE_PRESETS = {
   accountant: ['dashboard.view','invoices.view','expenses.view','expenses.manage','reports.view','activity.view','shifts.view']
 };
 const ROLE_LABELS = { owner:'مالك', admin:'مدير عام', manager:'مدير', cashier:'كاشير', accountant:'محاسب', custom:'مخصّص' };
+const MATRIX_ROLES = ['owner','admin','manager','cashier','accountant'];
+const PERM_GROUPS = [
+  {cat:'لوحة التحكم', perms:['dashboard.view']},
+  {cat:'المنتجات', perms:['products.view','products.manage']},
+  {cat:'العملاء', perms:['customers.view','customers.manage']},
+  {cat:'الموردون', perms:['suppliers.view','suppliers.manage']},
+  {cat:'الفواتير', perms:['invoices.view','invoices.create','invoices.delete']},
+  {cat:'المصروفات', perms:['expenses.view','expenses.manage']},
+  {cat:'الشفتات', perms:['shifts.view','shifts.manage']},
+  {cat:'التقارير', perms:['reports.view']},
+  {cat:'المستخدمون', perms:['users.view','users.manage']},
+  {cat:'الإعدادات', perms:['settings.manage']},
+  {cat:'سجل النشاط', perms:['activity.view']},
+];
+function permMatrix(){
+  const head = '<tr><th>الصلاحية</th>' + MATRIX_ROLES.map(r=>`<th style="text-align:center;min-width:70px">${ROLE_LABELS[r]}</th>`).join('') + '</tr>';
+  const body = PERM_GROUPS.map(g=>{
+    const sep = `<tr><td colspan="${MATRIX_ROLES.length+1}" style="background:#f1f5f9;font-weight:800;color:#475569;font-size:12px">${g.cat}</td></tr>`;
+    const rows = g.perms.map(p=>{
+      const cells = MATRIX_ROLES.map(r=>{
+        const has = (ROLE_PRESETS[r]||[]).includes(p);
+        return `<td style="text-align:center">${has?'<span style="color:#16a34a;font-weight:800;font-size:15px">✓</span>':'<span style="color:#cbd5e1">—</span>'}</td>`;
+      }).join('');
+      return `<tr><td style="font-size:13px">${PERMS[p]}</td>${cells}</tr>`;
+    }).join('');
+    return sep+rows;
+  }).join('');
+  return `<table><thead>${head}</thead><tbody>${body}</tbody></table>`;
+}
 
 function can(p){
   if(!S.member) return false;
@@ -1109,7 +1138,7 @@ function exportReport(){
 /* ===================== Users & Permissions ===================== */
 async function viewUsers(){
   if(!can('users.view')){ shell('المستخدمون', permDenied()); return; }
-  shell('المستخدمون', `<div id="usr"><div class="empty">جارٍ التحميل...</div></div>`);
+  shell('المستخدمون والصلاحيات',`<div id="usr"><div class="empty">جارٍ التحميل...</div></div>`);
   const {data:mems}=await sb.from('company_members').select('*').eq('company_id',S.companyId).order('joined_at');
   const uids=(mems||[]).map(m=>m.user_id).filter(Boolean);
   const {data:profs}=await sb.from('profiles').select('id,email,full_name').in('id', uids.length?uids:['00000000-0000-0000-0000-000000000000']);
@@ -1125,8 +1154,15 @@ async function viewUsers(){
       <td>${can('users.manage')?`<button class="btn btn-sm" onclick="memberForm('${m.user_id}')">صلاحيات</button> ${m.role!=='owner'?`<button class="btn btn-sm btn-danger" onclick="removeMember('${m.user_id}','${esc(email)}')">إزالة</button>`:''}`:''}</td>
     </tr>`;
   }).join('');
-  $('#usr').innerHTML=`${can('users.manage')?'<div class="toolbar"><button class="btn btn-primary" onclick="inviteForm()">+ دعوة مستخدم</button></div>':''}
-    <div class="card" style="padding:0;overflow:auto"><table><thead><tr><th>المستخدم</th><th>الدور</th><th>الحالة</th><th>انضم</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  $('#usr').innerHTML=`
+    <div class="card"><div class="card-h"><h3>مصفوفة الصلاحيات حسب الدور</h3></div>
+      <p class="muted" style="font-size:13px;margin-top:0">الأدوار الافتراضية وتعريف صلاحياتها. يمكنك تخصيص صلاحيات كل عضو على حدة (أو اختيار «مخصّص») من جدول الأعضاء بالأسفل.</p>
+      <div style="overflow:auto">${permMatrix()}</div>
+    </div>
+    ${can('users.manage')?'<div class="toolbar"><button class="btn btn-primary" onclick="inviteForm()">+ دعوة مستخدم</button></div>':''}
+    <div class="card"><div class="card-h"><h3>أعضاء الشركة</h3></div>
+      <div style="padding:0;overflow:auto"><table><thead><tr><th>المستخدم</th><th>الدور</th><th>الحالة</th><th>انضم</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+    </div>`;
 }
 function inviteForm(){
   modal(`<div class="modal-h"><h3>دعوة مستخدم</h3><button class="x-btn" onclick="closeTopModal()">×</button></div>
