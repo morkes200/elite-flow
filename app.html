@@ -66,34 +66,34 @@ input,select,textarea{font-family:inherit}
 .alert{padding:11px 13px;border-radius:9px;font-size:13px;margin-bottom:14px}
 .alert-error{background:var(--danger-bg);color:#b91c1c}
 .alert-info{background:var(--info-bg);color:#1e40af}
+.alert-warn{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}
 
 /* ===== Layout ===== */
-.layout{display:flex;min-height:100vh}
-.sidebar{width:248px;background:linear-gradient(180deg,#0f172a,#1e293b);color:#cbd5e1;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;flex-shrink:0}
-.sidebar .brand{padding:20px 22px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,.08)}
-.sidebar .brand .logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--primary),var(--teal));display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px}
-.sidebar .brand .bn{font-weight:800;color:#fff;font-size:16px;line-height:1.2}
-.sidebar .brand .bs{font-size:11px;color:#94a3b8}
-.sidebar .nav{flex:1;overflow-y:auto;padding:10px 12px}
-.nav-sec{font-size:10.5px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.5px;padding:14px 10px 6px}
-.nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:#cbd5e1;font-weight:600;font-size:13.5px;cursor:pointer;margin-bottom:2px;transition:.15s}
-.nav-item:hover{background:rgba(255,255,255,.06);color:#fff}
-.nav-item.active{background:linear-gradient(135deg,rgba(30,64,175,.5),rgba(15,118,110,.4));color:#fff}
-.nav-item .ic{width:20px;text-align:center;font-size:16px;opacity:.9}
+.layout{display:flex;flex-direction:column;min-height:100vh}
+/* ===== شريط التنقل العلوي (بعرض الشاشة) ===== */
+.topnav{background:linear-gradient(180deg,#0f172a,#1e293b);color:#cbd5e1;position:sticky;top:0;z-index:40;box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.topnav-row{display:flex;align-items:center;gap:14px;padding:8px 18px;min-height:54px;flex-wrap:wrap}
+.topnav-brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.topnav-brand .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--primary),var(--teal));display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:16px}
+.topnav-brand .bn{font-weight:800;color:#fff;font-size:15px;line-height:1.2}
+.topnav-brand .bs{font-size:11px;color:#94a3b8}
+.topnav-links{display:flex;align-items:center;gap:2px;flex:1;flex-wrap:wrap}
+.topnav-sep{width:1px;height:22px;background:rgba(255,255,255,.12);margin:0 6px}
+.nav-item{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border-radius:8px;color:#cbd5e1;font-weight:600;font-size:13px;cursor:pointer;transition:.15s;white-space:nowrap}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff}
+.nav-item.active{background:linear-gradient(135deg,rgba(30,64,175,.55),rgba(15,118,110,.45));color:#fff}
+.nav-item .ic{font-size:15px;opacity:.95}
 .nav-item.disabled{opacity:.4;cursor:not-allowed}
-.sidebar .foot{padding:12px 16px;border-top:1px solid rgba(255,255,255,.08);font-size:11.5px}
-.main{flex:1;display:flex;flex-direction:column;min-width:0}
-.topbar{background:linear-gradient(135deg,var(--primary),var(--primary-hover));color:#fff;padding:11px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:40;box-shadow:0 2px 8px rgba(0,0,0,.15)}
-.topbar .tb-left{display:flex;align-items:center;gap:12px}
-.topbar .menu-btn{display:none;background:rgba(255,255,255,.15);border:none;color:#fff;width:34px;height:34px;border-radius:8px;font-size:18px}
-.topbar .page-title{font-size:17px;font-weight:800}
-.topbar .tb-right{display:flex;align-items:center;gap:8px}
-.topbar .company-pill{background:rgba(255,255,255,.15);padding:7px 12px;border-radius:8px;font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:7px}
-.topbar .user-pill{background:rgba(255,255,255,.12);padding:6px 10px;border-radius:8px;font-size:12px;display:flex;align-items:center;gap:8px}
-.topbar .avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--primary));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px}
-.topbar .btn-sm{background:rgba(255,255,255,.15);color:#fff;border:none;padding:7px 11px;border-radius:8px;font-weight:700;font-size:12px}
-.topbar .btn-sm:hover{background:rgba(255,255,255,.25)}
-.topbar .btn-sm.danger{background:rgba(220,38,38,.85)}
+.topnav-user{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.topnav .company-pill{background:rgba(255,255,255,.12);padding:7px 12px;border-radius:8px;font-size:12.5px;font-weight:700;display:flex;align-items:center;gap:7px}
+.topnav .user-pill{background:rgba(255,255,255,.1);padding:6px 10px;border-radius:8px;font-size:12px;display:flex;align-items:center;gap:8px}
+.topnav .avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--primary));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px}
+.topnav .btn-sm{background:rgba(255,255,255,.15);color:#fff;border:none;padding:7px 11px;border-radius:8px;font-weight:700;font-size:12px;font-family:inherit}
+.topnav .btn-sm:hover{background:rgba(255,255,255,.25)}
+.topnav .btn-sm.danger{background:rgba(220,38,38,.85)}
+.topnav .menu-btn{display:none;background:rgba(255,255,255,.15);border:none;color:#fff;width:34px;height:34px;border-radius:8px;font-size:18px;align-items:center;justify-content:center}
+.topnav-sub{background:#0b1220;padding:7px 18px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.topnav-sub .page-title{font-weight:700;color:#e2e8f0;font-size:14.5px}
 .content{padding:22px;flex:1}
 .burger-only{}
 
@@ -177,9 +177,11 @@ tr:hover td{background:#fafbfd}
 
 /* ===== responsive ===== */
 @media(max-width:900px){
-  .sidebar{position:fixed;right:-260px;z-index:50;transition:.25s}
-  .sidebar.open{right:0}
-  .topbar .menu-btn{display:inline-flex}
+  .topnav-links{display:none;width:100%;flex-direction:column;align-items:stretch;padding:6px 12px 10px;gap:2px}
+  .topnav-links.open{display:flex}
+  .topnav-sep{display:none}
+  .topnav .menu-btn{display:inline-flex}
+  .nav-item{padding:11px 12px}
   .pos{grid-template-columns:1fr}
   .cart{position:static}
   .grid2,.grid3{grid-template-columns:1fr}
@@ -370,12 +372,13 @@ function navItems(){
 }
 function shell(title, content){
   const path = location.hash.replace(/^#/,'').split('?')[0];
-  const nav = navItems().map(g=>`
-    <div class="nav-sec">${g.sec}</div>
+  const groups = navItems();
+  const links = groups.map((g, gi)=>`
+    ${gi>0?'<span class="topnav-sep"></span>':''}
     ${g.items.map(it=>{
       const allowed = can(it.perm);
       const active = path===it.p ? 'active':'';
-      return `<div class="nav-item ${active} ${allowed?'':'disabled'}" ${allowed?`onclick="navigate('${it.p}')"`:''}><span class="ic">${it.i}</span><span>${it.t}</span></div>`;
+      return `<a class="nav-item ${active} ${allowed?'':'disabled'}" ${allowed?`href="#${it.p}"`:''}><span class="ic">${it.i}</span><span>${it.t}</span></a>`;
     }).join('')}`).join('');
   const comp = S.company;
   const initials = (S.profile?.full_name||S.user?.email||'?').trim().charAt(0).toUpperCase();
@@ -386,25 +389,20 @@ function shell(title, content){
     : `<span class="company-pill">🏢 ${esc(comp?.name||'')}</span>`;
   $('#app').innerHTML = `
     <div class="layout">
-      <aside class="sidebar" id="sidebar">
-        <div class="brand"><div class="logo">E</div><div><div class="bn">Elite Flow</div><div class="bs">${esc(comp?.name||'')}</div></div></div>
-        <div class="nav">${nav}</div>
-        <div class="foot">v1.0 · Multi-tenant<br><span style="opacity:.6">${esc(S.user?.email||'')}</span></div>
-      </aside>
-      <div class="main">
-        <header class="topbar">
-          <div class="tb-left">
-            <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
-            <div class="page-title">${esc(title)}</div>
-          </div>
-          <div class="tb-right">
+      <header class="topnav">
+        <div class="topnav-row">
+          <button class="menu-btn" onclick="document.getElementById('tnav').classList.toggle('open')">☰</button>
+          <div class="topnav-brand"><div class="logo">E</div><div><div class="bn">Elite Flow</div><div class="bs">${esc(comp?.name||'')}</div></div></div>
+          <nav class="topnav-links" id="tnav">${links}</nav>
+          <div class="topnav-user">
             ${companySelect}
             <span class="user-pill"><span class="avatar">${initials}</span>${esc(S.profile?.full_name||'مستخدم')} · ${ROLE_LABELS[S.member?.role]||''}</span>
             <button class="btn-sm danger" onclick="doSignOut()">خروج</button>
           </div>
-        </header>
-        <main class="content">${content}</main>
-      </div>
+        </div>
+      </header>
+      <div class="topnav-sub"><span class="page-title">${esc(title)}</span></div>
+      <main class="content">${content}</main>
     </div>`;
 }
 function permBanner(){
@@ -1254,7 +1252,11 @@ async function viewActivity(){
 function getStoredConfig(){
   try { const raw = localStorage.getItem('ef_supabase_config'); if(raw) return JSON.parse(raw); } catch(e){ return null; }
 }
-function saveConfig(url, key){ try{ localStorage.setItem('ef_supabase_config', JSON.stringify({url, anonKey:key})); }catch(e){} }
+// تحفظ الإعداد في localStorage وتعيد true لو نجح. تفشل (false) لو التخزين محجوب (file://).
+function saveConfig(url, key){
+  try{ localStorage.setItem('ef_supabase_config', JSON.stringify({url, anonKey:key})); return true; }
+  catch(e){ return false; }
+}
 function effectiveConfig(){
   const st = getStoredConfig();
   if(st && st.url && st.anonKey) return st;
@@ -1262,11 +1264,17 @@ function effectiveConfig(){
   return null;
 }
 function showSetupScreen(){
+  const fileWarn = location.protocol === 'file:'
+    ? `<div class="alert alert-warn">⚠️ أنت تفتح الملف عبر <b>file://</b> — متصفّحات كتير بتمنع حفظ الإعداد هنا، فكل تحديث للصفحة هيرجّعك لهذه الشاشة.
+       للحل: شغّل خادماً محلياً (<code>python3 -m http.server</code> داخل مجلد الملف ثم افتح <code>http://localhost:8000/app.html</code>)،
+       أو ارفع التطبيق على استضافة ثابتة (الأسهل: اسحب app.html على <b>app.netlify.com/drop</b>).</div>`
+    : '';
   $('#app').innerHTML = `<div class="auth-wrap">
     <div class="auth-brand">${brandHTML()}</div>
     <div class="auth-side"><div class="auth-card" style="max-width:480px">
       <h2>إعداد أول مرة</h2>
       <div class="sub">اربط التطبيق بقاعدة بيانات Supabase</div>
+      ${fileWarn}
       <div class="alert alert-info">من لوحة Supabase: <b>Project Settings → API</b>، انسخ <b>Project URL</b> و <b>anon public key</b>، ثم الصقهما هنا. تُحفظ القيم في متصفحك فقط.</div>
       <div id="setupErr"></div>
       <form id="setupForm">
@@ -1282,7 +1290,12 @@ function showSetupScreen(){
     const url=$('#su_url').value.trim(), key=$('#su_key').value.trim();
     if(!url.startsWith('http')){ $('#setupErr').innerHTML='<div class="alert alert-error">الرابط غير صحيح — يجب أن يبدأ بـ https://</div>'; return; }
     if(key.length<20){ $('#setupErr').innerHTML='<div class="alert alert-error">المفتاح غير صحيح</div>'; return; }
-    saveConfig(url,key); toast('تم الحفظ، جارٍ إعادة التحميل...','ok'); setTimeout(()=>location.reload(),700);
+    const ok = saveConfig(url,key);
+    if(!ok){
+      $('#setupErr').innerHTML='<div class="alert alert-error">تعذّر حفظ الإعداد — متصفحك بيمنع التخزين (غالباً بسبب file://). شغّل الملف عبر خادم محلي أو ارفعه على استضافة، ثم حاول ثانية.</div>';
+      return;
+    }
+    toast('تم الحفظ، جارٍ إعادة التحميل...','ok'); setTimeout(()=>location.reload(),700);
   });
 }
 
